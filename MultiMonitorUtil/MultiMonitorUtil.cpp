@@ -56,6 +56,13 @@ BOOL CMultiMonitorUtilApp::InitInstance()
 	// 含まれている場合にシェル マネージャーを作成します。
 	CShellManager *pShellManager = new CShellManager;
 
+	//多重起動のチェック
+	if ( CMultiMonitorUtilDlg::checkAlreadyRunning() )
+	{
+		//重複起動しているので無視
+		return FALSE;
+	}
+
 	// 標準初期化
 	// これらの機能を使わずに最終的な実行可能ファイルの
 	// サイズを縮小したい場合は、以下から不要な初期化

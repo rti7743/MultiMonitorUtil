@@ -428,13 +428,30 @@ public:
 	{
 		for(auto i = this->SaveDatabase.begin() ; i != this->SaveDatabase.end() ; ++i)
 		{
-			if ( ::IsWindow(i->Handle) )
+			if ( ::IsWindow( i->Handle ) )
 			{
+				//Å¬‰»Ä‘ÅŠJ‚µ‚Ä‚¢‚é‚È‚ç‚à‚Æ‚É–ß‚·.
+				if ( IsZoomed(i->Handle) || IsIconic(i->Handle) )
+				{
+					::ShowWindow( i->Handle , SW_RESTORE );
+				}
+
 				SetWindowPos(
 					i->Handle, NULL, i->Rect.left, i->Rect.top 
 					,i->Rect.right - i->Rect.left
 					,i->Rect.bottom - i->Rect.top 
 					,0);
+
+				//Å¬‰»/Å‘å‰»‚Ì•œŒ³
+				if (i->IsZoomed)
+				{
+					::ShowWindow( i->Handle , SW_MAXIMIZE );
+				}
+				//Å¬‰»/Å‘å‰»‚Ì•œŒ³
+				if (i->IsIconic)
+				{
+					::ShowWindow( i->Handle , SW_MINIMIZE );
+				}
 			}
 		}
 

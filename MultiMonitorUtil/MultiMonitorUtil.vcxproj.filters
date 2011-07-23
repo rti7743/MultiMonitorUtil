@@ -21,6 +21,9 @@
     <None Include="MultiMonitorUtil.ico">
       <Filter>リソース ファイル</Filter>
     </None>
+    <None Include="res\MultiMonitorUtil.ico">
+      <Filter>リソース ファイル</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MultiMonitorUtil.h">

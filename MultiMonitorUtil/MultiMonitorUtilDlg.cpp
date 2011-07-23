@@ -24,7 +24,8 @@ const int WM_TASKBAR_CREATED = RegisterWindowMessage(_T("TaskbarCreated"));
 CMultiMonitorUtilDlg::CMultiMonitorUtilDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CMultiMonitorUtilDlg::IDD, pParent)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	this->m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	this->IsConfigDialogOpen = false;
 }
 
 void CMultiMonitorUtilDlg::DoDataExchange(CDataExchange* pDX)
@@ -43,6 +44,33 @@ BEGIN_MESSAGE_MAP(CMultiMonitorUtilDlg, CDialogEx)
 	ON_COMMAND(IDM_QUIT, OnMenuCommandExit)
 	ON_WM_HOTKEY()
 END_MESSAGE_MAP()
+
+//既に動いていないかチェックする.
+//(static メソッド)
+bool CMultiMonitorUtilDlg::checkAlreadyRunning() 
+{
+	//mutexでもいいけど、ここではmessageを送信したいので
+	//main windowがあるかどうかを検索する.
+	HWND hwnd = ::GetTopWindow(::GetDesktopWindow());
+	do
+	{
+		TCHAR title[ MAX_PATH ]= {0};
+		::GetWindowText( hwnd, title, sizeof(title) );
+
+		if ( lstrcmp(title , L"MultiMonitorUtil_Hidden_window" ) != 0 )
+		{
+			continue;
+		}
+		//見つけた!
+		::PostMessage(hwnd , WM_COMMAND, (WPARAM)IDM_SETUP, 0); 
+		//既に動いてます!
+		return true;
+	}
+	while( (hwnd = ::GetNextWindow(hwnd,GW_HWNDNEXT)) !=NULL );
+
+	//まだ動いていません!
+	return false;
+}
 
 
 // CMultiMonitorUtilDlg メッセージ ハンドラー
@@ -220,6 +248,13 @@ afx_msg LRESULT CMultiMonitorUtilDlg::OnTaskbarCreated(WPARAM wParam, LPARAM lPa
 //設定ダイアログを開く
 void CMultiMonitorUtilDlg::OnMenuCommandDialog() 
 {
+	//既に設定ダイアログを開いているならなにもしない
+	if (this->IsConfigDialogOpen)
+	{
+		return ;
+	}
+	this->IsConfigDialogOpen = true;
+
 	// ダイアログを開く。
 	CNiseMainDialog mainDialog;
 
@@ -235,6 +270,9 @@ void CMultiMonitorUtilDlg::OnMenuCommandDialog()
 	SetHotKey();
 	//コンフィグを書きこむ
 	SaveConfig();
+
+	//ダイアログを綴じたのでフラグも下ろす.
+	this->IsConfigDialogOpen = false;
 }
 
 //終了

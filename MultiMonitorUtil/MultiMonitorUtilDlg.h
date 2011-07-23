@@ -54,6 +54,10 @@ private:
 
 	//マルチモニターコントロールの本体
 	CMultiMonitor MonitorUtil;
+public:
+	//既に動いていないかチェックする.
+	//(static メソッド)
+	static bool CMultiMonitorUtilDlg::checkAlreadyRunning() ;
 
 // 実装
 protected:
@@ -62,6 +66,8 @@ protected:
 	NOTIFYICONDATA NotifyIcon ;
 	//設定ファイル
 	DataConfig Config;
+	//設定ダイアログを開いているかどうか
+	bool IsConfigDialogOpen;
 
 
 	//通知領域に追加
